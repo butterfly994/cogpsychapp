@@ -6,27 +6,24 @@ class Sperling extends React.Component{
   constructor(props){
     super(props)
     this.state = {
-      started: false,
-      sets: 1,
+      sets: this.props.sets,
       trialInProgress: false,
       GInd: 0,
       trialsBeforeSwitch: -1,
       inputRequested: false,
       G: null,
       displayCross: true,
-      lettersArr: []
+      lettersArr: [],
+      partialRowNum: -1
     }
     
-    this.gridTypes = [['SimpleSpace', 3, false], ['SimpleSpace', 4, false], 
-    ['SimpleSpace', 5, false], ['SimpleSpace', 6, false], 
-    ['SimpleSpace', 7, false], ['CloseSpace', 6, false], ['4x4x4', 12, true], 
-    ['3x3', 6, false], ['4x4', 8, true], ['4x4', 8, false]]
     this.cons = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
       'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z']
 
     this.handlePress = this.handlePress.bind(this)
     this.runTrial = this.runTrial.bind(this)
     this.requestInput = this.requestInput.bind(this)
+    this.playTone = this.playTone.bind(this)
   }
 
   componentDidMount(){
@@ -46,13 +43,13 @@ class Sperling extends React.Component{
       if (letterOrNumber < 0.5) {
           return (Math.floor(Math.random() * 10) + '')
       } else {
-          let index = Math.floor(Math.random() * (this.cons.length - 1))
+          let index = Math.floor(Math.random() * this.cons.length)
           return this.cons[index]
       }
   }
 
   chooseL() {
-      let index = Math.floor(Math.random() * (this.cons.length - 1))
+      let index = Math.floor(Math.random() * this.cons.length)
       return this.cons[index]
   }
 
@@ -65,17 +62,40 @@ class Sperling extends React.Component{
       return letters
   }
 
+  getCheckInputsFunc(){
+    if(this.state.partialRowNum < 0) return ((i) => {return true})
+    else{
+      return (
+        (i) => { 
+          return (i >= this.state.G[3]*this.state.partialRowNum && 
+          i < this.state.G[3]*(this.state.partialRowNum + 1))
+        }
+      )
+    }
+  }
+
 
   handlePress() {
-    if(!this.state.started) return
     if (this.state.inputRequested) {
         let inputs = document.getElementsByTagName('input')
         inputs = Object.values(inputs)
         inputs = inputs.map((x => x.value))
-        if (!inputs.some(x => (x === ''))) {
+        
+        if (!this.props.isPartial && !inputs.some(x => (x === ''))) {
             //replace this line with DB storage in future
             console.log(this.calculateScore(inputs))
             this.setState({trialInProgress: false, displayCross: true, inputRequested: false})
+        }
+        else if(this.props.isPartial){ 
+          let count = inputs.reduce((sum, curr) => {
+          if(curr !== '') return sum + 1 
+          else return sum}, 0)
+          
+          if(count === this.state.G[3]){
+            //replace this line with DB storage in future
+            console.log(this.calculateScore(inputs) / this.state.G[3])
+            this.setState({trialInProgress: false, displayCross: true, inputRequested: false})
+          }
         }
     } 
     else {
@@ -88,7 +108,7 @@ class Sperling extends React.Component{
       window.setTimeout(this.runTrial, 500)
   }
 
-   requestInput() {
+  requestInput() {
       this.setState({trialsBeforeSwitch: this.state.trialsBeforeSwitch - 1, inputRequested: true})
   }
 
@@ -100,21 +120,59 @@ class Sperling extends React.Component{
             return
         }
 
-        let gridTypesExcl = Array.from(this.gridTypes)
+        let gridTypesExcl = Array.from(this.props.availableGridTypes)
+        if(this.props.sets - this.state.sets <= 2 && this.props.isPartial){
+          gridTypesExcl = gridTypesExcl.slice(0, 3)
+        }
 
         if (this.state.trialsBeforeSwitch >= 0) {
             gridTypesExcl.splice(this.state.GInd, 1)
         }
 
-        let newInd = Math.floor(Math.random() * (gridTypesExcl.length - 1))
+        let newInd = Math.floor(Math.random() * gridTypesExcl.length)
         let newG = gridTypesExcl[newInd]
-        let newtrialsBeforeSwitch = Math.floor(Math.random() * 15) + 5
+        let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
 
         this.setState({GInd: newInd, G: newG, trialsBeforeSwitch: newtrialsBeforeSwitch})
       }
-      this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])})
-      console.log(this.state.lettersArr)
+      if(this.props.toneDelay < 0){
+        this.playTone()
+        window.setInterval(() => this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])}),
+         this.props.toneDelay * -1)
+      }
+      else{
+        this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])})
+      }
+      window.setTimeout(this.playTone, this.props.toneDelay)
       window.setTimeout(this.requestInput, this.props.exposureDuration)
+  }
+
+  playTone(){
+      if(this.props.isPartial){
+        let rowNum
+        if(this.state.G[1] / this.state.G[3] === 3){
+          rowNum = Math.floor(Math.random()*3)
+          if(rowNum === 0){
+            this.props.high.play('dur1')
+          }
+          else if(rowNum === 1){
+            this.props.medium.play('dur1')
+          }
+          else{
+            this.props.low.play('dur1')
+          }
+        }
+        else{
+          rowNum = Math.floor(Math.random()*2)
+          if(rowNum === 0){
+            this.props.high.play('dur1')
+          }
+          else{
+            this.props.low.play('dur1')
+          }
+        }
+        this.setState({partialRowNum: rowNum})
+      }
   }
 
   render(){ 
@@ -127,26 +185,7 @@ class Sperling extends React.Component{
         </div>
       )
     }
-    else if(!this.state.started){
-      toRender = 
-        (
-          <div className='App'>
-            <div id='instructionText'>
-                When you are ready to begin, press the Start button below. At the start of each trial, a cross will
-                appear in the center of the screen. Make sure it is clearly in focus before pressing any key to begin.
-                After a delay, an arrangement of letters and/or numbers will flash briefly on the screen. A response grid
-                will then appear, matching the arrangement, where you are to write the letter you saw in the corresponding
-                position on the grid. Any circular symbol is always the number zero and not the letter 'O'. If you cannot
-                recall some letters/numbers, please guess to the best of your ability. This is a test of your ability to
-                read letters under these conditions, not a test of your memory. When guessing, do not fill in the same
-                letter consecutively, but guess different letters. When you have finished filling in your responses, press
-                any key to submit them.
-            </div>
-            <div id='startBtn' onClick = {() => this.setState({started: true, trialInProgress: false})}>Start</div>
-          </div>
-        )
-    }
-    else if(this.state.started && this.state.displayCross){
+    else if(this.state.displayCross){
       toRender = 
       (
         <div className = 'App'>
@@ -160,7 +199,8 @@ class Sperling extends React.Component{
         <Grid 
         str =  {this.state.G[0]}
         lettersArr = {this.state.lettersArr}
-        isResponse = {this.state.inputRequested} />
+        isResponse = {this.state.inputRequested}
+        checkInputsFunc = {this.getCheckInputsFunc()} />
         </div>
       )
     }

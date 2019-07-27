@@ -13,7 +13,12 @@ class Grid extends React.Component {
         makeInputs() {
             let inputs = []
             for (let i = 0; i < this.props.lettersArr.length; i++) {
-                inputs.push( <input maxLength = '1' key = {i + ''}/>)
+                if(this.props.checkInputsFunc(i)){
+                    inputs.push( <input maxLength = '1' key = {i + ''}/>)
+                }
+                else{
+                    inputs.push( <input maxLength = '0' key = {i + ''}/>)
+                }
             }
             return inputs
         }

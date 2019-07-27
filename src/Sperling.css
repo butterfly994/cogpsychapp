@@ -49,7 +49,7 @@
 }
 
 div#instructionText {
-    margin: 10vh 10vw;
+    margin: 5vh 10vw;
     font-size: 24pt;
     text-align: center;
 }
@@ -59,6 +59,23 @@ div#startBtn {
     display: inline-block;
     color: white;
     padding: 3vh 3vw;
+    margin: 3vh 0vw;
     border: 4px solid black;
     font-size: 24pt;
+}
+
+.buttonArr{
+  display: flex;
+  justify-content: space-around;
+  width: 50vw;
+}
+
+.button {
+  background-color: blue;
+  display: inline-block;
+  color: white;
+  padding: 2vh 4vw 2vh 4vw;
+  border: 4px solid black;
+  font-size: 24pt;
+  margin-left: 1vw;
 }
