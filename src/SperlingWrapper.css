@@ -1,12 +1,4 @@
-* {
-  margin:0px;
-  padding:0px;
-  font-size: 60pt;
-  font-family: monospace;
-  box-sizing: border-box;
-}
-
-.App {
+.instructionWrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -17,7 +9,7 @@
 
 div#instructionText {
     margin: 5vh 10vw;
-    font-size: 24pt;
+    font-size: 22pt;
     text-align: center;
 }
 
