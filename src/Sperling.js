@@ -1,6 +1,7 @@
 import React from 'react'
 import Grid from './Grid.js'
 import './Sperling.css'
+import {Howler} from 'howler'
 
 class Sperling extends React.Component{
   constructor(props){
@@ -19,6 +20,7 @@ class Sperling extends React.Component{
     
     this.cons = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
       'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z']
+    Howler.volume(0.25)
 
     this.handlePress = this.handlePress.bind(this)
     this.runTrial = this.runTrial.bind(this)
@@ -137,14 +139,34 @@ class Sperling extends React.Component{
       }
       if(this.props.toneDelay < 0){
         this.playTone()
-        window.setInterval(() => this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])}),
+        window.setTimeout(
+          () => {
+            this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])})
+            window.setTimeout(this.requestInput, this.props.exposureDuration)
+          },
          this.props.toneDelay * -1)
+      }
+      else if(this.props.toneDelay >= 0 && this.props.isPartial){
+        this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])})
+        if(this.props.exposureDuration < this.props.toneDelay){
+          window.setTimeout(
+            () => {
+              this.requestInput()
+              window.setTimeout(this.playTone, this.props.toneDelay - this.props.exposureDuration)
+            }, this.props.exposureDuration)
+        }
+        else{
+          window.setTimeout(
+            () => {
+              this.playTone()
+              window.setTimeout(this.requestInput, this.toneDelay - this.props.exposureDuration)
+            }, this.props.toneDelay)
+        }
       }
       else{
         this.setState({displayCross: false, trialInProgress: true, lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])})
+        window.setTimeout(this.requestInput, this.props.exposureDuration)
       }
-      window.setTimeout(this.playTone, this.props.toneDelay)
-      window.setTimeout(this.requestInput, this.props.exposureDuration)
   }
 
   playTone(){

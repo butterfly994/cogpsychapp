@@ -23,7 +23,7 @@ class App extends React.Component {
         this.exposureDurations = [15, 50, 150, 500]
         this.toneDelays = [-100, 0, 150, 300, 500, 1000]
 
-        Howler.volume(0.5)
+        Howler.volume(0.25)
         this.low = new Howl({
             src: ['low.wav'],
             sprite: {
