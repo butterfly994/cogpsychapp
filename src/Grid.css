@@ -1,10 +1,9 @@
-*{
+/* *{
     margin:0px;
     padding:0px;
-    font-size: 60pt;
     font-family: monospace;
     box-sizing: border-box;
-}
+} */
 
 div#gridSimpleSpace {
     display: flex;
@@ -49,4 +48,5 @@ div#grid3x3x3 {
 input {
     width: 53px;
     height: 93px;
+    font-size: 60pt;
 }

@@ -10,12 +10,12 @@ class App extends React.Component{
         return (
             <Router>
                 <div className = 'nav'>
-                    <Link to = '/' className = 'link'>Description</Link>
-                    <Link to ='/experiment'  className = 'link'>Start Experiment</Link>
+                    <Link to = '/description' className = 'link'>Description</Link>
+                    <Link to ='/'  className = 'link'>Start Experiment</Link>
                     <Link to ='/visualizations' className = 'link'>Results</Link>
                 </div>
-                <Route exact path = '/' component={Description} />
-                <Route path='/experiment' component={SperlingWrapper} />
+                <Route path = '/description' component={Description} />
+                <Route exact path='/' component={SperlingWrapper} />
                 <Route path='/visualizations' component = {Visualizations} />
             </Router>
         )

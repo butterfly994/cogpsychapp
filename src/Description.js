@@ -6,6 +6,7 @@ class Description extends React.Component {
         return (
             <div className = 'App'>
                 <div className = 'paragraph'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     In 1960, George Sperling, cognitive scientist, released a 
                     monograph titled "The Information Available in Brief Visual 
                     Presentations". He detailed an experimental procedure in which 
@@ -18,6 +19,7 @@ class Description extends React.Component {
                     terms of the letter itself and its position.
                 </div>
                 <div className = 'paragraph'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     Throughout a series of experiments, several parameters were 
                     studied. These included exposure duration (how long the letters 
                     were visible), which Sperling concluded had a negligible effect 
@@ -32,6 +34,7 @@ class Description extends React.Component {
                     second, or third row of the letter array only.
                 </div>
                 <div className = 'paragraph'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     What Sperling found was that the subjects' accuracy in terms of 
                     the percent of letters correct in their responses when under the 
                     partial report condition was much higher. Sperling then 
@@ -43,6 +46,7 @@ class Description extends React.Component {
                     reporting letters.
                 </div>
                 <div className = 'paragraph'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     This website replicates Sperling's original experiment in a 
                     digital format. Many factors are identical to the original study, 
                     such as the pitch of the tones used, the types of stimuli, and 
@@ -57,6 +61,7 @@ class Description extends React.Component {
                     the instructions given to subjects and the duration of the tones.
                 </div>
                 <div className = 'paragraph'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     Any data collected from this web page is stored without 
                     reference to personally identifying information. Further, any 
                     data presented on the page is in aggregate, over the average of

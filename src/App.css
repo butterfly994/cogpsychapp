@@ -1,15 +1,16 @@
 * {
   margin:0px;
   padding:0px;
-  font-size: 60pt;
   font-family: monospace;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .App {
   display: flex;
   height: 90vh;
   width: 100vw;
+  font-size: 60pt;
   flex-direction: column;
   justify-content: center;
   align-items: center;
