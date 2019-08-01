@@ -4,6 +4,12 @@ import SperlingWrapper from './SperlingWrapper.js'
 import Visualizations from './Visualizations.js'
 import Description from './Description.js'
 import './App.css'
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
+import { withAuthenticator } from 'aws-amplify-react'; 
+
+
+Amplify.configure(awsconfig);
 
 class App extends React.Component{
     render(){
@@ -22,4 +28,4 @@ class App extends React.Component{
     }
 }
 
-export default App
+export default withAuthenticator(App, true)

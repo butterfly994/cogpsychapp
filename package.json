@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "aws-amplify": "^1.1.33",
+    "aws-amplify-react": "^2.3.12",
+    "aws-sdk": "^2.503.0",
     "d3": "^5.9.7",
     "howler": "^2.1.2",
     "react": "^16.8.6",

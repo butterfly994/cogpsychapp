@@ -3,6 +3,46 @@ import Grid from './Grid.js'
 import {
   Howler
 } from 'howler'
+import {Auth, API, graphqlOperation } from 'aws-amplify';
+
+const addWholeReport = `mutation createWholeReport($exposureDuration:Float! $numLetters: Int! $containsNumbers: Boolean! $gridName: String! $lettersCorrect: Int! $userId: String!) {
+  createWholeReport(input:{
+    exposureDuration:$exposureDuration
+    numLetters:$numLetters
+    containsNumbers:$containsNumbers
+    gridName:$gridName
+    lettersCorrect:$lettersCorrect
+    userId:$userId
+  }){
+    id
+    exposureDuration
+    numLetters
+    containsNumbers
+    gridName
+    lettersCorrect
+    userId
+  }
+}`
+const addPartialReport = `mutation createPartialReport($toneLevel:Int! $numLetters: Int! $containsNumbers: Boolean! $gridName: String! $toneDelay: Float! $accuracy: Float! $userId: String!) {
+  createPartialReport(input:{
+    toneLevel:$toneLevel
+    numLetters:$numLetters
+    containsNumbers:$containsNumbers
+    gridName:$gridName
+    toneDelay:$toneDelay
+    accuracy:$accuracy
+    userId:$userId
+  }){
+    id
+    toneLevel
+    numLetters
+    containsNumbers
+    gridName
+    toneDelay
+    accuracy
+    userId
+  }
+}`
 
 class Sperling extends React.Component {
   constructor(props) {
@@ -88,8 +128,14 @@ class Sperling extends React.Component {
       inputs = inputs.map((x => x.value))
 
       if (!this.props.isPartial && !inputs.some(x => (x === ''))) {
-        //replace this line with DB storage in future
-        console.log(this.calculateScore(inputs))
+          Auth.currentUserCredentials()
+            .then(userCreds =>  
+              {
+                this.wholeReportMutation(this.props.exposureDuration, this.state.G[1], 
+                  this.state.G[2], this.state.G[0], this.calculateScore(inputs), userCreds.identityId)
+              })
+            .catch(err => console.log(err))
+       
         this.setState({
           trialInProgress: false,
           displayCross: true,
@@ -102,8 +148,15 @@ class Sperling extends React.Component {
         }, 0)
 
         if (count === this.state.G[3]) {
-          //replace this line with DB storage in future
-          console.log(this.calculateScore(inputs) / this.state.G[3])
+          Auth.currentUserCredentials()
+            .then(userCreds =>  
+              {
+                this.partialReportMutation(this.state.partialRowNum, this.state.G[1], 
+                  this.state.G[2], this.state.G[0], this.props.toneDelay, 
+                  this.calculateScore(inputs)/this.state.G[3], userCreds.identityId)
+              })
+            .catch(err => console.log(err))
+
           this.setState({
             trialInProgress: false,
             displayCross: true,
@@ -222,6 +275,33 @@ class Sperling extends React.Component {
         partialRowNum: rowNum
       })
     }
+  }
+  
+  wholeReportMutation = async (exposureDuration, numLetters, containsNumbers, gridName, lettersCorrect, userId) => {
+    const trialDetails = {
+      exposureDuration: exposureDuration,
+      numLetters: numLetters,
+      containsNumbers: containsNumbers,
+      gridName: gridName,
+      lettersCorrect: lettersCorrect,
+      userId: userId
+    };
+    
+    await API.graphql(graphqlOperation(addWholeReport, trialDetails));
+  }
+
+  partialReportMutation = async (toneLevel, numLetters, containsNumbers, gridName, toneDelay, accuracy, userId) => {
+    const trialDetails = {
+      toneLevel: toneLevel,
+      numLetters: numLetters,
+      containsNumbers: containsNumbers,
+      gridName: gridName,
+      toneDelay: toneDelay,
+      accuracy: accuracy,
+      userId: userId
+    };
+    
+    await API.graphql(graphqlOperation(addPartialReport, trialDetails));
   }
 
   render() {

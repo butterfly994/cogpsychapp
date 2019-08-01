@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "sperling-dev-20190730200227-authRole",
+            "UnauthRoleArn": "arn:aws:iam::415029626354:role/sperling-dev-20190730200227-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::415029626354:role/sperling-dev-20190730200227-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "sperling-dev-20190730200227-deployment",
+            "UnauthRoleName": "sperling-dev-20190730200227-unauthRole",
+            "StackName": "sperling-dev-20190730200227",
+            "StackId": "arn:aws:cloudformation:us-east-1:415029626354:stack/sperling-dev-20190730200227/7ebe4a40-b326-11e9-a4e7-0a522351f81e"
+        },
+        "categories": {
+            "auth": {
+                "sperlinge61a854c": {}
+            }
+        }
+    }
+}

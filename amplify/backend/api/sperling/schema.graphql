@@ -1,0 +1,20 @@
+type WholeReport @model {
+  id: ID!
+  exposureDuration: Float!
+  numLetters: Int!
+  containsNumbers: Boolean!
+  gridName: String!
+  lettersCorrect: Int!
+  userId: String!
+}
+
+type PartialReport @model {
+  id: ID!
+  toneLevel: Int!
+  numLetters: Int!
+  containsNumbers: Boolean!
+  gridName: String!
+  toneDelay: Float!
+  accuracy: Float!
+  userId: String!
+}

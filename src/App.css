@@ -8,9 +8,9 @@
 
 .App {
   display: flex;
-  height: 90vh;
+  height: 80vh;
   width: 100vw;
-  font-size: 60pt;
+  font-size: 56pt;
   flex-direction: column;
   justify-content: center;
   align-items: center;
