@@ -52,6 +52,7 @@ class Sperling extends React.Component {
       trialInProgress: false,
       GInd: 0,
       trialsBeforeSwitch: -1,
+      trialsElapsed: 0,
       inputRequested: false,
       G: null,
       displayCross: true,
@@ -137,6 +138,7 @@ class Sperling extends React.Component {
       inputs = inputs.map((x => x.value))
 
       if (!this.props.isPartial && !inputs.some(x => (x === ''))) {
+        if(this.state.trialsElapsed > 3){
           Auth.currentUserCredentials()
             .then(userCreds =>  
               {
@@ -144,6 +146,7 @@ class Sperling extends React.Component {
                   this.state.G[2], this.state.G[0], this.calculateScore(inputs), userCreds.identityId)
               })
             .catch(err => console.log(err))
+        }
        
           if (this.state.trialsBeforeSwitch <= 0) {
             this.setState((state) => {return {
@@ -167,14 +170,16 @@ class Sperling extends React.Component {
         }, 0)
 
         if (count === this.state.G[3]) {
-          Auth.currentUserCredentials()
-            .then(userCreds =>  
-              {
-                this.partialReportMutation(this.state.partialRowNum, this.state.G[1], 
-                  this.state.G[2], this.state.G[0], this.props.toneDelay, 
-                  this.calculateScore(inputs)/this.state.G[3], userCreds.identityId)
-              })
-            .catch(err => console.log(err))
+          if(this.state.trialsElapsed > 3){
+            Auth.currentUserCredentials()
+              .then(userCreds =>  
+                {
+                  this.partialReportMutation(this.state.partialRowNum, this.state.G[1], 
+                    this.state.G[2], this.state.G[0], this.props.toneDelay, 
+                    this.calculateScore(inputs)/this.state.G[3], userCreds.identityId)
+                })
+              .catch(err => console.log(err))
+          }
 
           if (this.state.trialsBeforeSwitch <= 0) {
             this.setState((state) => {return {
@@ -230,6 +235,7 @@ class Sperling extends React.Component {
   requestInput() {
     this.setState((state) => { return {
       trialsBeforeSwitch: state.trialsBeforeSwitch - 1,
+      trialsElapsed: state.trialsElapsed + 1,
       inputRequested: true
     }})
 
@@ -254,7 +260,8 @@ class Sperling extends React.Component {
         this.setState({
           GInd: newInd,
           G: newG,
-          trialsBeforeSwitch: newtrialsBeforeSwitch
+          trialsBeforeSwitch: newtrialsBeforeSwitch,
+          trialsElapsed: 0
         })
       }
 
