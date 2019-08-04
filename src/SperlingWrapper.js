@@ -28,7 +28,7 @@ class SperlingWrapper extends React.Component {
             ['3x3', 6, false],
             ['4x4', 8, true],
             ['4x4', 8, false],
-            ['3x3x3', 9, true]
+            ['3x3x3', 9, false]
         ]
         this.partialReport = [
             ['3x3', 6, false, 3],

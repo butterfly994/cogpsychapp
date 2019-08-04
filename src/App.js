@@ -28,4 +28,4 @@ class App extends React.Component{
     }
 }
 
-export default withAuthenticator(App, true)
+export default withAuthenticator(App, {includeGreetings: false})

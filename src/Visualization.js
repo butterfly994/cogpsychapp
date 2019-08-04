@@ -2,6 +2,34 @@ import React from 'react'
 import * as d3 from 'd3'
 
 class Visualization extends React.Component {
+    wrap(text, width, start) {
+        text.each(function () {
+            let text = d3.select(this),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineHeight = 1, // ems
+                tspan = text.text(null)
+                            .append("tspan")
+                            .attr("dy", 0)
+                            .attr("x", start)
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if (tspan.node().getComputedTextLength() > width) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    console.log(line)
+                    line = [word];
+                    tspan = text.append("tspan")
+                                .attr("x", start)
+                                .attr("dy", lineHeight + "em")
+                                .text(word);
+                }
+            }
+        });
+    }
+
     componentDidMount() {
         // 2. Use the margin convention practice 
         var margin = {
@@ -69,6 +97,7 @@ class Visualization extends React.Component {
                 'translate(50, ' + (height + margin.top) + ')')
             .style('font-size', '12pt')
             .text(this.props.description)
+            .call(this.wrap, width, -margin.left)
 
         // 4. Call the y axis in a group tag
         svg.append('g')
@@ -85,30 +114,34 @@ class Visualization extends React.Component {
             .text(this.props.yAxis);
 
         // 9. Append the path, bind the data, and call the line generator 
-        svg.append('path')
-            .datum(this.props.dataset) // 10. Binds data to the line 
-            .attr('fill', 'none')
-            .attr('stroke', 'navy')
-            .attr('stroke-width', '3')
-            .attr('d', line); // 11. Calls the line generator 
+        for(let lineToDraw of this.props.data){
+            svg.append('path')
+                .datum(lineToDraw.dataset) // 10. Binds data to the line 
+                .attr('fill', 'none')
+                .attr('stroke', lineToDraw.lineColor)
+                .attr('stroke-width', '3')
+                .attr('d', line); // 11. Calls the line generator 
 
-        // 12. Appends a circle for each datapoint 
-        //triangle = 5, circle = 0, square = 3, cross = 1, x same index as cross, but have to add 'rotate(-45)' to its transform
-        svg.selectAll('.dot')
-            .data(this.props.dataset)
-            .enter().append('path')
-            .attr('stroke', '#fff')
-            .attr('fill', '#ffab00')
-            .attr('d', d3.symbol().type(function (d) {
-                return d3.symbols[d.pointType % 5];
-            }))
-            .attr('transform', function (d) {
-                if (d.pointType > 5) {
-                    return 'translate(' + xScale(d.x) + ',' + yScale(d.y) + ') rotate(-45)'
-                } else {
-                    return 'translate(' + xScale(d.x) + ',' + yScale(d.y) + ')'
-                }
-            })
+            // 12. Appends a circle for each datapoint 
+            //triangle = 5, circle = 0, square = 3, cross = 1, x same index as cross, but have to add 'rotate(-45)' to its transform
+            if(!lineToDraw.noSymbols){
+                svg.selectAll('.dot')
+                    .data(lineToDraw.dataset)
+                    .enter().append('path')
+                    .attr('stroke', '#fff')
+                    .attr('fill', lineToDraw.pointColor)
+                    .attr('d', d3.symbol().type(function (d) {
+                        return d3.symbols[d.pointType % 5];
+                    }))
+                    .attr('transform', function (d) {
+                        if (d.pointType > 5) {
+                            return 'translate(' + xScale(d.x) + ',' + yScale(d.y) + ') rotate(-45)'
+                        } else {
+                            return 'translate(' + xScale(d.x) + ',' + yScale(d.y) + ')'
+                        }
+                    })
+            }
+        }
     }
 
     render() {

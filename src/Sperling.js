@@ -72,6 +72,15 @@ class Sperling extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keypress', this.handlePress)
+    let newInd = Math.floor(Math.random() * this.props.availableGridTypes.length)
+    let newG = this.props.availableGridTypes[newInd]
+    let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+    this.setState({
+      GInd: newInd,
+      G: newG,
+      trialsBeforeSwitch: newtrialsBeforeSwitch
+    })
   }
 
   calculateScore(inputs) {
@@ -136,11 +145,21 @@ class Sperling extends React.Component {
               })
             .catch(err => console.log(err))
        
-        this.setState({
-          trialInProgress: false,
-          displayCross: true,
-          inputRequested: false
-        })
+          if (this.state.trialsBeforeSwitch <= 0) {
+            this.setState((state) => {return {
+              sets: state.sets - 1
+            }})
+            if (this.state.sets <= 0) {
+              return
+            }
+          }
+          else{
+            this.setState({
+              trialInProgress: false,
+              displayCross: true,
+              inputRequested: false
+            })
+          }
       } else if (this.props.isPartial) {
         let count = inputs.reduce((sum, curr) => {
           if (curr !== '') return sum + 1
@@ -157,11 +176,21 @@ class Sperling extends React.Component {
               })
             .catch(err => console.log(err))
 
-          this.setState({
-            trialInProgress: false,
-            displayCross: true,
-            inputRequested: false
-          })
+          if (this.state.trialsBeforeSwitch <= 0) {
+            this.setState((state) => {return {
+              sets: state.sets - 1
+            }})
+            if (this.state.sets <= 0) {
+              return
+            }
+          }
+          else{
+            this.setState({
+              trialInProgress: false,
+              displayCross: true,
+              inputRequested: false
+            })
+          }
         }
       }
     } else {
@@ -170,110 +199,120 @@ class Sperling extends React.Component {
 
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.displayCross && !this.state.displayCross){
+      if(this.props.isPartial && this.props.toneDelay >= 0){
+            if (this.props.exposureDuration < this.props.toneDelay) {
+              setTimeout(
+                () => {
+                  this.requestInput()
+                  setTimeout(this.playTone, this.props.toneDelay - this.props.exposureDuration)
+                }, this.props.exposureDuration)
+            } else {
+              setTimeout(
+                () => {
+                  this.playTone()
+                  setTimeout(this.requestInput, this.props.exposureDuration - this.props.toneDelay)
+                }, this.props.toneDelay)
+            }
+      }
+      else{
+        setTimeout(this.requestInput, this.props.exposureDuration)
+      }
+    }
+
+  }
+
   startTrial() {
-    window.setTimeout(this.runTrial, 500)
+    setTimeout(this.runTrial, 500)
   }
 
   requestInput() {
-    this.setState({
-      trialsBeforeSwitch: this.state.trialsBeforeSwitch - 1,
+    this.setState((state) => { return {
+      trialsBeforeSwitch: state.trialsBeforeSwitch - 1,
       inputRequested: true
-    })
+    }})
+
   }
 
 
   runTrial() {
-    if (this.state.trialsBeforeSwitch <= 0) {
-      this.setState({
-        sets: this.state.sets - 1
-      })
-      if (this.state.sets < 0) {
-        return
+      if (this.state.trialsBeforeSwitch <= 0) {
+        let gridTypesExcl = Array.from(this.props.availableGridTypes)
+        if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+          gridTypesExcl = gridTypesExcl.slice(0, 3)
+        }
+
+        if (this.state.trialsBeforeSwitch >= 0) {
+          gridTypesExcl.splice(this.state.GInd, 1)
+        }
+
+        let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+        let newG = gridTypesExcl[newInd]
+        let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+        this.setState({
+          GInd: newInd,
+          G: newG,
+          trialsBeforeSwitch: newtrialsBeforeSwitch
+        })
       }
 
-      let gridTypesExcl = Array.from(this.props.availableGridTypes)
-      if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
-        gridTypesExcl = gridTypesExcl.slice(0, 3)
+    let rowNum
+    if(this.props.isPartial){
+      if (this.state.G[1] / this.state.G[3] === 3) {
+        rowNum = Math.floor(Math.random() * 3)
       }
-
-      if (this.state.trialsBeforeSwitch >= 0) {
-        gridTypesExcl.splice(this.state.GInd, 1)
+      else{
+        rowNum = Math.floor(Math.random() * 2)
       }
-
-      let newInd = Math.floor(Math.random() * gridTypesExcl.length)
-      let newG = gridTypesExcl[newInd]
-      let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
-
-      this.setState({
-        GInd: newInd,
-        G: newG,
-        trialsBeforeSwitch: newtrialsBeforeSwitch
-      })
     }
     if (this.props.toneDelay < 0 && this.props.isPartial) {
       this.playTone()
-      window.setTimeout(
+      setTimeout(
         () => {
-          this.setState({
+          this.setState((state) => {return {
             displayCross: false,
             trialInProgress: true,
-            lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])
-          })
-          window.setTimeout(this.requestInput, this.props.exposureDuration)
+            inputRequested: false,
+            partialRowNum: rowNum,
+            lettersArr: this.generateInputsArray(state.G[1], state.G[2])}})
         },
         this.props.toneDelay * -1)
     } else if (this.props.toneDelay >= 0 && this.props.isPartial) {
-      this.setState({
+      this.setState((state) => {return {
         displayCross: false,
         trialInProgress: true,
-        lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])
-      })
-      if (this.props.exposureDuration < this.props.toneDelay) {
-        window.setTimeout(
-          () => {
-            this.requestInput()
-            window.setTimeout(this.playTone, this.props.toneDelay - this.props.exposureDuration)
-          }, this.props.exposureDuration)
-      } else {
-        window.setTimeout(
-          () => {
-            this.playTone()
-            window.setTimeout(this.requestInput, this.toneDelay - this.props.exposureDuration)
-          }, this.props.toneDelay)
-      }
+        inputRequested: false,
+        partialRowNum: rowNum,
+        lettersArr: this.generateInputsArray(state.G[1], state.G[2])}})
     } else {
-      this.setState({
+      this.setState((state) => {return {
         displayCross: false,
         trialInProgress: true,
-        lettersArr: this.generateInputsArray(this.state.G[1], this.state.G[2])
-      })
-      window.setTimeout(this.requestInput, this.props.exposureDuration)
+        inputRequested: false,
+        lettersArr: this.generateInputsArray(state.G[1], state.G[2])}})
+      }
     }
-  }
+  
 
   playTone() {
     if (this.props.isPartial) {
-      let rowNum
       if (this.state.G[1] / this.state.G[3] === 3) {
-        rowNum = Math.floor(Math.random() * 3)
-        if (rowNum === 0) {
+        if (this.state.partialRowNum === 0) {
           this.props.high.play('dur1')
-        } else if (rowNum === 1) {
+        } else if (this.state.partialRowNum === 1) {
           this.props.medium.play('dur1')
         } else {
           this.props.low.play('dur1')
         }
       } else {
-        rowNum = Math.floor(Math.random() * 2)
-        if (rowNum === 0) {
+        if (this.state.partialRowNum === 0) {
           this.props.high.play('dur1')
         } else {
           this.props.low.play('dur1')
         }
       }
-      this.setState({
-        partialRowNum: rowNum
-      })
     }
   }
   
@@ -305,8 +344,9 @@ class Sperling extends React.Component {
   }
 
   render() {
+    console.log(this.state.trialsBeforeSwitch)
     let toRender
-    if (this.state.sets < 0) {
+    if (this.state.sets <= 0) {
       toRender =
         ( 
           <div className = 'instructionWrapper'>
