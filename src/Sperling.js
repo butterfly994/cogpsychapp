@@ -149,12 +149,29 @@ class Sperling extends React.Component {
         }
        
           if (this.state.trialsBeforeSwitch <= 0) {
-            this.setState((state) => {return {
-              sets: state.sets - 1
-            }})
-            if (this.state.sets <= 0) {
-              return
+            let gridTypesExcl = Array.from(this.props.availableGridTypes)
+            if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+              gridTypesExcl = gridTypesExcl.slice(0, 3)
             }
+
+            if (this.state.trialsBeforeSwitch >= 0) {
+              gridTypesExcl.splice(this.state.GInd, 1)
+            }
+
+            let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+            let newG = gridTypesExcl[newInd]
+            let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+            this.setState((state) => {return {
+              GInd: newInd,
+              G: newG,
+              sets: state.sets - 1,
+              trialsBeforeSwitch: newtrialsBeforeSwitch,
+              trialsElapsed: 0,
+              trialInProgress: false,
+              displayCross: true,
+              inputRequested: false
+            }})
           }
           else{
             this.setState({
@@ -182,12 +199,29 @@ class Sperling extends React.Component {
           }
 
           if (this.state.trialsBeforeSwitch <= 0) {
-            this.setState((state) => {return {
-              sets: state.sets - 1
-            }})
-            if (this.state.sets <= 0) {
-              return
+            let gridTypesExcl = Array.from(this.props.availableGridTypes)
+            if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+              gridTypesExcl = gridTypesExcl.slice(0, 3)
             }
+
+            if (this.state.trialsBeforeSwitch >= 0) {
+              gridTypesExcl.splice(this.state.GInd, 1)
+            }
+
+            let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+            let newG = gridTypesExcl[newInd]
+            let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+            this.setState((state) => {return {
+              GInd: newInd,
+              G: newG,
+              sets: state.sets - 1,
+              trialsBeforeSwitch: newtrialsBeforeSwitch,
+              trialsElapsed: 0,
+              trialInProgress: false,
+              displayCross: true,
+              inputRequested: false
+            }})
           }
           else{
             this.setState({
@@ -198,10 +232,10 @@ class Sperling extends React.Component {
           }
         }
       }
-    } else {
+    } 
+    else{
       this.startTrial()
     }
-
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -244,25 +278,6 @@ class Sperling extends React.Component {
 
   runTrial() {
       if (this.state.trialsBeforeSwitch <= 0) {
-        let gridTypesExcl = Array.from(this.props.availableGridTypes)
-        if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
-          gridTypesExcl = gridTypesExcl.slice(0, 3)
-        }
-
-        if (this.state.trialsBeforeSwitch >= 0) {
-          gridTypesExcl.splice(this.state.GInd, 1)
-        }
-
-        let newInd = Math.floor(Math.random() * gridTypesExcl.length)
-        let newG = gridTypesExcl[newInd]
-        let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
-
-        this.setState({
-          GInd: newInd,
-          G: newG,
-          trialsBeforeSwitch: newtrialsBeforeSwitch,
-          trialsElapsed: 0
-        })
       }
 
     let rowNum
@@ -351,7 +366,6 @@ class Sperling extends React.Component {
   }
 
   render() {
-    console.log(this.state.trialsBeforeSwitch)
     let toRender
     if (this.state.sets <= 0) {
       toRender =
