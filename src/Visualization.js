@@ -19,7 +19,6 @@ class Visualization extends React.Component {
                 if (tspan.node().getComputedTextLength() > width) {
                     line.pop();
                     tspan.text(line.join(" "));
-                    console.log(line)
                     line = [word];
                     tspan = text.append("tspan")
                                 .attr("x", start)

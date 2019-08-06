@@ -89,7 +89,7 @@ class Visualizations extends React.Component {
         Promise.all(dataset)
             .then((values) => {
                 if(!values.some((val) => {return val.length === 0})){
-                    this.setState({[updateName]: values.map((arr, i) => { return {'y': transformXFn(this.getAverage(arr)), 'x': transformYFn(xs[i]), 'pointType': pointTypeFunc(i)}})})
+                    this.setState({[updateName]: values.map((arr, i) => { return {'y': transformYFn(this.getAverage(arr)), 'x': transformXFn(xs[i]), 'pointType': pointTypeFunc(i)}})})
                 }
             })
     }

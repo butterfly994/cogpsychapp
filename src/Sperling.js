@@ -73,8 +73,12 @@ class Sperling extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keypress', this.handlePress)
-    let newInd = Math.floor(Math.random() * this.props.availableGridTypes.length)
-    let newG = this.props.availableGridTypes[newInd]
+    let gridTypesExcl = Array.from(this.props.availableGridTypes)
+    if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+      gridTypesExcl = gridTypesExcl.slice(0, 3)
+    }
+    let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+    let newG = gridTypesExcl[newInd]
     let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
 
     this.setState({
@@ -277,9 +281,6 @@ class Sperling extends React.Component {
 
 
   runTrial() {
-      if (this.state.trialsBeforeSwitch <= 0) {
-      }
-
     let rowNum
     if(this.props.isPartial){
       if (this.state.G[1] / this.state.G[3] === 3) {
@@ -347,10 +348,8 @@ class Sperling extends React.Component {
       lettersCorrect: lettersCorrect,
       userId: userId
     };
-    
-    await API.graphql(graphqlOperation(addWholeReport, trialDetails));
-  }
-
+    await API.graphql(graphqlOperation(addWholeReport, trialDetails)); }
+ 
   partialReportMutation = async (toneLevel, numLetters, containsNumbers, gridName, toneDelay, accuracy, userId) => {
     const trialDetails = {
       toneLevel: toneLevel,
@@ -367,7 +366,7 @@ class Sperling extends React.Component {
 
   render() {
     let toRender
-    if (this.state.sets <= 0) {
+    if (this.state.sets < 0) {
       toRender =
         ( 
           <div className = 'instructionWrapper'>
