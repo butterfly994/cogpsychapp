@@ -292,7 +292,6 @@ class Sperling extends React.Component {
       this.setState({partialRowNum: rowNum})
     }
     if (this.props.toneDelay < 0 && this.props.isPartial) {
-      console.log(rowNum)
       this.playTone()
       setTimeout(
         () => {

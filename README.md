@@ -1,68 +1,43 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Cognitive Psychology Online
 
-## Available Scripts
+View the web application [here](http://sperling-20190730200445-hostingbucket-dev.s3-website-us-east-1.amazonaws.com/). You will need to make an account to participate in the experiment.
 
-In the project directory, you can run:
+This project consists currently of one web application with three pages: a description section that describes the experiment that has been digitized (Sperling's 1960 study on the nature of iconic memory), the experiment itself, and a data visualization page that draws from completed trials. 
 
-### `npm start`
+## Description of the Experiment
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This section is copied verbatim from the description section of the web application: 
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+     In 1960, George Sperling, cognitive scientist, released a monograph titled "The Information Available in Brief Visual Presentations". He detailed an experimental procedure in which subjects were given index cards with arrays of letters and numbers in various formations, which were briefly illuminated by a tachitoscope. The subjects were then required to write down the letters they could remember from this presentation. Their performance was generally measured in terms of the number of letters in their response which matched the input both in terms of the letter itself and its position.
 
-### `npm test`
+     Throughout a series of experiments, several parameters were studied. These included exposure duration (how long the letters were visible), which Sperling concluded had a negligible effect on performance, as well as tachitoscope-specific variations with light/dark post-exposure conditions. However, the biggest factor in performance was the distinction between partial and whole reporting. In whole report conditions, subjects were required to write down letters from the entire input with the goal of maximizing the total number of letters correct. In the partial reporting condition, participants would listen for a tone (high, low, or medium), that signaled to them whether to write the first, second, or third row of the letter array only.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+     What Sperling found was that the subjects' accuracy in terms of the percent of letters correct in their responses when under the partial report condition was much higher. Sperling then concluded that we form a memory of the letter array that we are subsequently able to read from, but that the memory fades very quickly. Several other parameters that he tested related to partial reports were: the timing of the tone in relation to the exposure to the letter array, and only reporting numbers or only reporting letters.
 
-### `npm run build`
+     This website replicates Sperling's original experiment in a digital format. Many factors are identical to the original study, such as the pitch of the tones used, the types of stimuli, and the timing of exposure to the letter array. Several factors which have not been replicated are: the decay pattern of light from the tachitoscope, Sperling's fifth experiment which involved post-exposure fields from the tachitoscope, and Sperling's sixth and seventh experiments (involving reporting only letters or only numbers, or mandating an order of report, respectively). Due to limited information, the author of this web page has had to infer several experimental details, such as the instructions given to subjects and the duration of the tones.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+     Any data collected from this web page is stored without reference to personally identifying information. Further, any data presented on the page is in aggregate, over the average of all participants.
+    
+    Sperling, G. (1960). The information available in brief visual presentations. Washington, D.C.: American Psychological Association.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Specifically, independent variables in the experiment are: whole report versus partial report conditions (whether the subject is asked to recall all the letters that flash on the screen or one specific row), exposure duration (how long the letters appear on the screen), letter arrangement and number of letters displayed, and delay of instructional tone designating which row is to be reported in the partial report condition.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Technologies Used and Implementation Details
 
-### `npm run eject`
+The web application was developed principally with React, using create-react-app. The Howler library was used to play instructional tones. AWS Amplify was used to configure authentication (using AWS Cognito in the background) and data persistence (using AWS DynamoDB). Specifically, partial report condition and whole report condition data is stored in two separate tables, as they have disparate fields (instructional tone delay is not applicable to the whole report condition, and exposure duration was not varied in the partial report condition), and performance was reported differently (per cent accuracy versus overall letters guessed correctly). Both queries and table mutations are conducted using GraphQL. Graphs are constructed using D3.js. Currently, because of a relative lack of data, no graphs show up on the visualizations page, however, the graphs are structured to be basic line graphs, with a key at the top of the page serving as a reference for the different data point shapes and their meanings.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Known Issues
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* Currently, at lower exposure durations (15, 50 milliseconds), occasionally the letter arrangement is not rendered before the response grid appears.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Future Work
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+This is an ongoing project. After a baseline of data has been collected, I will probably buy a more friendly domain for the web application. Below is a list of further features that may be added, in order of priority (highest to lowest).
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* Input checking - not letting the subject submit a response if it contains invalid characters (lowercase letters, numbers when the input type had no numbers, vowels, or non-alphanumeric symbols)
+* Personalized data visualizations - giving the subject a set of graphs only using their data on the visualizations page. Or, potentially, just showing the subject their personal data in a table format.
+* Digitizing other experiments. The next experiment that would be digitized would be Averbach and Coriell's work on the backwards masking phenomenon.
+* More elaborate data visualizations and more varied data visualizations from just line graphs
+* Digitizing experiment 5 of Sperling's study (varying post-exposure fields). This would involve either showing a dark screen or light screen after the letters flash on the screen.
+* Digitizing experiment 6 of Sperling's study. This would involve trials that have the subject only report the numbers that flashed on the screen, or only the letters, depending on an instruction tone
+* Digitizing experiment 7 of Sperling's study. This would involve trials that have the subject mandated to write their response in a particular order (from top to bottom, or vice versa), depending on an instruction tone 
