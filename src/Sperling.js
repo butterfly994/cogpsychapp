@@ -30,7 +30,7 @@ const addPartialReport = `mutation createPartialReport($toneLevel:Int! $numLette
     containsNumbers:$containsNumbers
     gridName:$gridName
     toneDelay:$toneDelay
-    accuracy:$accuracy
+    accuracy:$accuracysetSsetSsetS
     userId:$userId
   }){
     id
@@ -289,8 +289,10 @@ class Sperling extends React.Component {
       else{
         rowNum = Math.floor(Math.random() * 2)
       }
+      this.setState({partialRowNum: rowNum})
     }
     if (this.props.toneDelay < 0 && this.props.isPartial) {
+      console.log(rowNum)
       this.playTone()
       setTimeout(
         () => {
@@ -298,7 +300,6 @@ class Sperling extends React.Component {
             displayCross: false,
             trialInProgress: true,
             inputRequested: false,
-            partialRowNum: rowNum,
             lettersArr: this.generateInputsArray(state.G[1], state.G[2])}})
         },
         this.props.toneDelay * -1)
@@ -307,7 +308,6 @@ class Sperling extends React.Component {
         displayCross: false,
         trialInProgress: true,
         inputRequested: false,
-        partialRowNum: rowNum,
         lettersArr: this.generateInputsArray(state.G[1], state.G[2])}})
     } else {
       this.setState((state) => {return {
