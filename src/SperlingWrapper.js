@@ -66,10 +66,8 @@ class SperlingWrapper extends React.Component {
 
     componentDidMount() {
         let isP = Math.floor(Math.random() * 2)
-        isP = 1
         if (isP === 1) {
             let toneDelayIdx = Math.floor(Math.random() * this.toneDelays.length)
-            toneDelayIdx = 0
             this.setState({
                 isPartial: true,
                 toneDelay: this.toneDelays[toneDelayIdx]

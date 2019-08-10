@@ -134,111 +134,112 @@ class Sperling extends React.Component {
     }
   }
 
-
   handlePress() {
-    if (this.state.inputRequested) {
-      let inputs = document.getElementsByTagName('input')
-      inputs = Object.values(inputs)
-      inputs = inputs.map((x => x.value))
+    if(this.state.sets > 0){
+      if (this.state.inputRequested) {
+        let inputs = document.getElementsByTagName('input')
+        inputs = Object.values(inputs)
+        inputs = inputs.map((x => x.value))
 
-      if (!this.props.isPartial && !inputs.some(x => (x === ''))) {
-        if(this.state.trialsElapsed > 3){
-          Auth.currentUserCredentials()
-            .then(userCreds =>  
-              {
-                this.wholeReportMutation(this.props.exposureDuration, this.state.G[1], 
-                  this.state.G[2], this.state.G[0], this.calculateScore(inputs), userCreds.identityId)
-              })
-            .catch(err => console.log(err))
-        }
-       
-          if (this.state.trialsBeforeSwitch <= 0) {
-            let gridTypesExcl = Array.from(this.props.availableGridTypes)
-            if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
-              gridTypesExcl = gridTypesExcl.slice(0, 3)
-            }
-
-            if (this.state.trialsBeforeSwitch >= 0) {
-              gridTypesExcl.splice(this.state.GInd, 1)
-            }
-
-            let newInd = Math.floor(Math.random() * gridTypesExcl.length)
-            let newG = gridTypesExcl[newInd]
-            let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
-
-            this.setState((state) => {return {
-              GInd: newInd,
-              G: newG,
-              sets: state.sets - 1,
-              trialsBeforeSwitch: newtrialsBeforeSwitch,
-              trialsElapsed: 0,
-              trialInProgress: false,
-              displayCross: true,
-              inputRequested: false
-            }})
-          }
-          else{
-            this.setState({
-              trialInProgress: false,
-              displayCross: true,
-              inputRequested: false
-            })
-          }
-      } else if (this.props.isPartial) {
-        let count = inputs.reduce((sum, curr) => {
-          if (curr !== '') return sum + 1
-          else return sum
-        }, 0)
-
-        if (count === this.state.G[3]) {
+        if (!this.props.isPartial && !inputs.some(x => (x === ''))) {
           if(this.state.trialsElapsed > 3){
             Auth.currentUserCredentials()
               .then(userCreds =>  
                 {
-                  this.partialReportMutation(this.state.partialRowNum, this.state.G[1], 
-                    this.state.G[2], this.state.G[0], this.props.toneDelay, 
-                    this.calculateScore(inputs)/this.state.G[3], userCreds.identityId)
+                  this.wholeReportMutation(this.props.exposureDuration, this.state.G[1], 
+                    this.state.G[2], this.state.G[0], this.calculateScore(inputs), userCreds.identityId)
                 })
               .catch(err => console.log(err))
           }
+        
+            if (this.state.trialsBeforeSwitch <= 0) {
+              let gridTypesExcl = Array.from(this.props.availableGridTypes)
+              if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+                gridTypesExcl = gridTypesExcl.slice(0, 3)
+              }
 
-          if (this.state.trialsBeforeSwitch <= 0) {
-            let gridTypesExcl = Array.from(this.props.availableGridTypes)
-            if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
-              gridTypesExcl = gridTypesExcl.slice(0, 3)
+              if (this.state.trialsBeforeSwitch >= 0) {
+                gridTypesExcl.splice(this.state.GInd, 1)
+              }
+
+              let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+              let newG = gridTypesExcl[newInd]
+              let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+              this.setState((state) => {return {
+                GInd: newInd,
+                G: newG,
+                sets: state.sets - 1,
+                trialsBeforeSwitch: newtrialsBeforeSwitch,
+                trialsElapsed: 0,
+                trialInProgress: false,
+                displayCross: true,
+                inputRequested: false
+              }})
+            }
+            else{
+              this.setState({
+                trialInProgress: false,
+                displayCross: true,
+                inputRequested: false
+              })
+            }
+        } else if (this.props.isPartial) {
+          let count = inputs.reduce((sum, curr) => {
+            if (curr !== '') return sum + 1
+            else return sum
+          }, 0)
+
+          if (count === this.state.G[3]) {
+            if(this.state.trialsElapsed > 3){
+              Auth.currentUserCredentials()
+                .then(userCreds =>  
+                  {
+                    this.partialReportMutation(this.state.partialRowNum, this.state.G[1], 
+                      this.state.G[2], this.state.G[0], this.props.toneDelay, 
+                      this.calculateScore(inputs)/this.state.G[3], userCreds.identityId)
+                  })
+                .catch(err => console.log(err))
             }
 
-            if (this.state.trialsBeforeSwitch >= 0) {
-              gridTypesExcl.splice(this.state.GInd, 1)
+            if (this.state.trialsBeforeSwitch <= 0) {
+              let gridTypesExcl = Array.from(this.props.availableGridTypes)
+              if (this.props.sets - this.state.sets <= 2 && this.props.isPartial) {
+                gridTypesExcl = gridTypesExcl.slice(0, 3)
+              }
+
+              if (this.state.trialsBeforeSwitch >= 0) {
+                gridTypesExcl.splice(this.state.GInd, 1)
+              }
+
+              let newInd = Math.floor(Math.random() * gridTypesExcl.length)
+              let newG = gridTypesExcl[newInd]
+              let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
+
+              this.setState((state) => {return {
+                GInd: newInd,
+                G: newG,
+                sets: state.sets - 1,
+                trialsBeforeSwitch: newtrialsBeforeSwitch,
+                trialsElapsed: 0,
+                trialInProgress: false,
+                displayCross: true,
+                inputRequested: false
+              }})
             }
-
-            let newInd = Math.floor(Math.random() * gridTypesExcl.length)
-            let newG = gridTypesExcl[newInd]
-            let newtrialsBeforeSwitch = Math.floor(Math.random() * 16) + 5
-
-            this.setState((state) => {return {
-              GInd: newInd,
-              G: newG,
-              sets: state.sets - 1,
-              trialsBeforeSwitch: newtrialsBeforeSwitch,
-              trialsElapsed: 0,
-              trialInProgress: false,
-              displayCross: true,
-              inputRequested: false
-            }})
-          }
-          else{
-            this.setState({
-              trialInProgress: false,
-              displayCross: true,
-              inputRequested: false
-            })
+            else{
+              this.setState({
+                trialInProgress: false,
+                displayCross: true,
+                inputRequested: false
+              })
+            }
           }
         }
+      } 
+      else{
+        this.startTrial()
       }
-    } 
-    else{
-      this.startTrial()
     }
   }
 
@@ -365,7 +366,7 @@ class Sperling extends React.Component {
 
   render() {
     let toRender
-    if (this.state.sets < 0) {
+    if (this.state.sets <= 0) {
       toRender =
         ( 
           <div className = 'instructionWrapper'>
